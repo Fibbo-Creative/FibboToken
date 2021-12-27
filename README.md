@@ -1,2 +1,1 @@
-# FibboToken
-Fibbo Token
+# Fibbo Token
