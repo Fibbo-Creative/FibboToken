@@ -10,6 +10,7 @@ contract FibboToken {
     uint256 public totalSupply = 100000000000000000000000000; // 100 million tokens.
     uint8   public decimals = 18;
     address public teamWallet;
+    address public daoContract;
     IDEXRouter private router; // Router address.
     address private pancakePairAddress; // Pair address.
 
@@ -19,8 +20,9 @@ contract FibboToken {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
-    constructor(address _teamWallet) {
+    constructor(address _teamWallet, address _daoContract) {
         teamWallet = _teamWallet;
+        daoContract = _daoContract;
         router = IDEXRouter(0xcCAFCf876caB8f9542d6972f87B5D62e1182767d); // TODO: TestNet
         pancakePairAddress = IPancakeFactory(router.factory()).createPair(address(this), router.WETH());
 
@@ -56,7 +58,7 @@ contract FibboToken {
     function transfer(address _to, uint256 _value) public returns (bool success) {
         require(balanceOf[msg.sender] >= _value);
 
-        uint _feeAmount;
+        uint256 _feeAmount;
         if(msg.sender == pancakePairAddress) {
             // Buy
             _feeAmount = mulScale(_value, 25, 10000); // 25 basis points = 0.25%
@@ -68,11 +70,15 @@ contract FibboToken {
             _feeAmount = mulScale(_value, 50, 10000); // 50 basis points = 0.50%
         }
         
-        // TODO: Repartir fees.
+        // TODO: Comprobar.
+        uint256 _daoTokens = mulScale(_feeAmount, 7500, 10000); // 7500 basis points = 75%
+        uint256 _teamTokens = _feeAmount - _daoTokens;
 
-        uint _amountToSend = _value - _feeAmount;
+        uint256 _amountToSend = _value - _feeAmount;
         balanceOf[msg.sender] -= _amountToSend;
         balanceOf[_to] += _amountToSend;
+        balanceOf[daoContract] += _daoTokens;
+        balanceOf[teamWallet] += _teamTokens;
 
         emit Transfer(msg.sender, _to, _amountToSend);
 
@@ -151,7 +157,7 @@ contract FibboToken {
         require(_value <= balanceOf[_from]);
         require(_value <= _allowances[_from][msg.sender]);
 
-        uint _feeAmount;
+        uint256 _feeAmount;
         if(_from == pancakePairAddress) {
             // Buy
             _feeAmount = mulScale(_value, 25, 10000); // 25 basis points = 0.25%
@@ -163,11 +169,15 @@ contract FibboToken {
             _feeAmount = mulScale(_value, 50, 10000); // 50 basis points = 0.50%
         }
 
-        // TODO: Repartir Fees.
+        // TODO: Comprobar.
+        uint256 _daoTokens = mulScale(_feeAmount, 7500, 10000); // 7500 basis points = 75%
+        uint256 _teamTokens = _feeAmount - _daoTokens;
 
-        uint _amountToSend = _value - _feeAmount;
+        uint256 _amountToSend = _value - _feeAmount;
         balanceOf[_from] -= _amountToSend;
         balanceOf[_to] += _amountToSend;
+        balanceOf[daoContract] += _daoTokens;
+        balanceOf[teamWallet] += _teamTokens;
         _allowances[_from][msg.sender] -= _value;
 
         emit Transfer(_from, _to, _amountToSend);
