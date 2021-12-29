@@ -70,7 +70,6 @@ contract FibboToken {
             _feeAmount = mulScale(_value, 50, 10000); // 50 basis points = 0.50%
         }
         
-        // TODO: Comprobar.
         uint256 _daoTokens = mulScale(_feeAmount, 7500, 10000); // 7500 basis points = 75%
         uint256 _teamTokens = _feeAmount - _daoTokens;
 
@@ -169,7 +168,6 @@ contract FibboToken {
             _feeAmount = mulScale(_value, 50, 10000); // 50 basis points = 0.50%
         }
 
-        // TODO: Comprobar.
         uint256 _daoTokens = mulScale(_feeAmount, 7500, 10000); // 7500 basis points = 75%
         uint256 _teamTokens = _feeAmount - _daoTokens;
 

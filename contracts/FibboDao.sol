@@ -2,11 +2,10 @@
 
 pragma solidity ^0.8.6;
 
-// Imports
 import "./Libraries.sol";
 
-contract Chest {
-    address public owner;
+contract FibboDao {
+    address public teamWallet;
     IERC20 public token;
     bool private tokenAvailable = false;
     uint256 public minBalance;
@@ -27,14 +26,14 @@ contract Chest {
         bool success;
     }
 
-    constructor(uint256 _minBalance) {
-        owner = msg.sender;
+    constructor(address _teamWallet, uint256 _minBalance) {
+        teamWallet = _teamWallet;
         minBalance = _minBalance;
     }
 
     // Modifiers
     modifier onlyOwner() {
-        require(msg.sender == owner, 'You must be the owner.');
+        require(msg.sender == teamWallet, 'You must be the owner.');
         _;
     }
 
