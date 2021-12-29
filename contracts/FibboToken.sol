@@ -74,7 +74,7 @@ contract FibboToken {
         uint256 _teamTokens = _feeAmount - _daoTokens;
 
         uint256 _amountToSend = _value - _feeAmount;
-        balanceOf[msg.sender] -= _amountToSend;
+        balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _amountToSend;
         balanceOf[daoContract] += _daoTokens;
         balanceOf[teamWallet] += _teamTokens;
@@ -172,7 +172,7 @@ contract FibboToken {
         uint256 _teamTokens = _feeAmount - _daoTokens;
 
         uint256 _amountToSend = _value - _feeAmount;
-        balanceOf[_from] -= _amountToSend;
+        balanceOf[_from] -= _value;
         balanceOf[_to] += _amountToSend;
         balanceOf[daoContract] += _daoTokens;
         balanceOf[teamWallet] += _teamTokens;
