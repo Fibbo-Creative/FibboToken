@@ -11,6 +11,9 @@ contract FibboToken {
     uint8   public decimals = 18;
     address public teamWallet;
     address public daoContract;
+    address private friendsPresale;
+    address private firstPresale;
+    address private secondPresale;
     IDEXRouter private router; // Router address.
     address private pancakePairAddress; // Pair address.
 
@@ -20,9 +23,12 @@ contract FibboToken {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
-    constructor(address _teamWallet, address _daoContract) {
+    constructor(address _teamWallet, address _daoContract, address _friendsPresale, address _firstPresale, address _secondPresale) {
         teamWallet = _teamWallet;
         daoContract = _daoContract;
+        friendsPresale = _friendsPresale;
+        firstPresale = _firstPresale;
+        secondPresale = _secondPresale;
         router = IDEXRouter(0xcCAFCf876caB8f9542d6972f87B5D62e1182767d); // TODO: TestNet
         pancakePairAddress = IPancakeFactory(router.factory()).createPair(address(this), router.WETH());
 

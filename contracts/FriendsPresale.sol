@@ -8,7 +8,8 @@ contract FriendsPresale is ReentrancyGuard {
     address public owner; // Dueño del contrato.
     IERC20 public token; // Token.
     bool private tokenAvailable = false;
-    uint public tokensPerBNB = 8000; // Cantidad de Tokens que se van a repartir por cada FTM aportado. TODO: Cambiar
+    IERC20 private USDC = IERC20(0x04068DA6C83AFCFA0e13ba15A6696662335D5B75);
+    uint256 public tokensPerUSD = 8000; // Cantidad de Tokens que se van a repartir por cada FTM aportado. TODO: Cambiar
     uint public ending; // Tiempo que va finalizar la preventa.
     bool public presaleStarted = false; // Indica si la preventa ha sido iniciada o no.
     address public deadWallet = 0x000000000000000000000000000000000000dEaD; // Wallet de quemado.
@@ -66,15 +67,17 @@ contract FriendsPresale is ReentrancyGuard {
     /**
      * @notice Función que te permite comprar MYMs. 
      */
-    function invest() public payable nonReentrant {
+    function invest(uint256 _amount) public nonReentrant {
         require(whitelist[msg.sender], "You must be on the whitelist.");
         require(presaleStarted, "Presale must have started.");
         require(block.timestamp <= ending, "Presale finished.");
-        invested[msg.sender] += msg.value; // Actualiza la inversión del inversor.
-        require(invested[msg.sender] >= 0.10 ether, "Your investment should be more than 0.10 BNB.");
-        require(invested[msg.sender] <= 5 ether, "Your investment cannot exceed 5 BNB.");
+        invested[msg.sender] += _amount; // Actualiza la inversión del inversor.
+        require(invested[msg.sender] >= 10000000000000000000, "Your investment should be more than 10$.");
+        require(invested[msg.sender] <= 2500000000000000000000, "Your investment cannot exceed 2500$.");
 
-        uint _investorTokens = msg.value * tokensPerBNB; // Tokens que va a recibir el inversor.
+        USDC.transferFrom(msg.sender, address(this), _amount);
+
+        uint _investorTokens = _amount * tokensPerUSD; // Tokens que va a recibir el inversor.
         investorBalance[msg.sender] += _investorTokens;
         withdrawableBalance[msg.sender] += _investorTokens;
         tokensSold += _investorTokens;
