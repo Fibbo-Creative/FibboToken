@@ -9,6 +9,7 @@ contract FibboToken {
     string  public symbol = "FIBBO";
     uint256 public totalSupply = 100000000000000000000000000; // 100 million tokens.
     uint8   public decimals = 18;
+    uint256 public balanceLimit = 2000000000000000000000000; // 2 million tokens.
     address public teamWallet;
     address public daoContract;
     address private friendsPresale;
@@ -63,6 +64,8 @@ contract FibboToken {
      */
     function transfer(address _to, uint256 _value) public returns (bool success) {
         require(balanceOf[msg.sender] >= _value);
+        uint256 _recipientBalance = balanceOf[_to] + _value;
+        require(_recipientBalance <= balanceLimit, "Recipient balance can't exceed the balance limit.");
 
         uint256 _feeAmount;
         if(msg.sender == pancakePairAddress) {
