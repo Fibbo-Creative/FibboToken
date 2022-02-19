@@ -17,7 +17,7 @@ module.exports = async function (deployer) {
   await deployer.deploy(SecondPresale, "0x1a84F1f9CE6f4bF0FD2b1B4689Db53776e64bF1c") // TODO: Cambiar wallet del equipo.
   const secondPresale = await SecondPresale.deployed()
 
-  await deployer.deploy(FibboToken, "0x1a84F1f9CE6f4bF0FD2b1B4689Db53776e64bF1c", fibboDao.address) //TODO: Cambiar wallet del equipo.
+  await deployer.deploy(FibboToken, "0x1a84F1f9CE6f4bF0FD2b1B4689Db53776e64bF1c", "0x1a84F1f9CE6f4bF0FD2b1B4689Db53776e64bF1c", "0x1a84F1f9CE6f4bF0FD2b1B4689Db53776e64bF1c", "0x1a84F1f9CE6f4bF0FD2b1B4689Db53776e64bF1c", fibboDao.address) //TODO: Cambiar wallet de fundadores, equipo, devs y marketing.
   const fibboToken = await FibboToken.deployed()
 
   await fibboDao.setToken(fibboToken.address)

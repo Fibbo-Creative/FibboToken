@@ -10,7 +10,10 @@ contract FibboToken {
     uint256 public totalSupply = 100000000000000000000000000; // 100 million tokens.
     uint8   public decimals = 18;
     uint256 public balanceLimit = 2000000000000000000000000; // 2 million tokens.
+    address public foundersWallet;
     address public teamWallet;
+    address public devWallet;
+    address public marketingWallet;
     address public daoContract;
     address private friendsPresale;
     address private firstPresale;
@@ -24,8 +27,11 @@ contract FibboToken {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
-    constructor(address _teamWallet, address _daoContract, address _friendsPresale, address _firstPresale, address _secondPresale) {
+    constructor(address _foundersWallet, address _teamWallet, address _devWallet, address _marketingWallet, address _daoContract, address _friendsPresale, address _firstPresale, address _secondPresale) {
+        foundersWallet = _foundersWallet;
         teamWallet = _teamWallet;
+        devWallet = _devWallet;
+        marketingWallet = _marketingWallet;
         daoContract = _daoContract;
         friendsPresale = _friendsPresale;
         firstPresale = _firstPresale;
@@ -33,12 +39,20 @@ contract FibboToken {
         router = IDEXRouter(0xcCAFCf876caB8f9542d6972f87B5D62e1182767d); // TODO: TestNet
         pancakePairAddress = IPancakeFactory(router.factory()).createPair(address(this), router.WETH());
 
-        balanceOf[teamWallet] = totalSupply;
+        //uint256 _foundersTokens = mulScale(totalSupply, 1500, 10000); // 1500 basis points = 15%
+        uint256 _teamTokens = mulScale(totalSupply, 1000, 10000); // 1000 basis points = 10%
+        uint256 _devTokens = mulScale(totalSupply, 1000, 10000); // 1000 basis points = 10%
+        uint256 _marketingTokens = mulScale(totalSupply, 1000, 10000); // 1000 basis points = 10%
+
+        balanceOf[teamWallet] = _teamTokens;
+        balanceOf[devWallet] = _devTokens;
+        balanceOf[marketingWallet] = _marketingTokens;
+        balanceOf[foundersWallet] = totalSupply - (_teamTokens + _devTokens + _marketingTokens);
     }
 
     // Modifiers
     modifier onlyOwner() {
-        require(msg.sender == teamWallet, 'You must be the owner.');
+        require(msg.sender == foundersWallet, 'You must be the owner.');
         _;
     }
 
