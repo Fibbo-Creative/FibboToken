@@ -5,11 +5,11 @@ pragma solidity ^0.8.6;
 import "./Libraries.sol";
 
 contract SecondPresale is ReentrancyGuard {
-    address public owner; // Dueño del contrato.
-    IERC20 public token; // Token.
+    address public owner;
+    IERC20 public token;
     bool private tokenAvailable = false;
     IERC20 private USDC = IERC20(0x04068DA6C83AFCFA0e13ba15A6696662335D5B75);
-    uint public tokensPerUSD = 8000; // Cantidad de Tokens que se van a repartir por cada FTM aportado. TODO: Cambiar
+    uint public tokensPerUSD = 25; // Cantidad de Tokens que se van a repartir por cada USD aportado.
     uint public ending; // Tiempo que va finalizar la preventa.
     bool public presaleStarted = false; // Indica si la preventa ha sido iniciada o no.
     address public deadWallet = 0x000000000000000000000000000000000000dEaD; // Wallet de quemado.
@@ -17,7 +17,7 @@ contract SecondPresale is ReentrancyGuard {
     uint public tokensSold;
 
     mapping(address => bool) public whitelist; // Whitelist de inversores permitidos en la preventa.
-    mapping(address => uint) public invested; // Cantidad de BNBs que ha invertido cada inversor en la preventa.
+    mapping(address => uint) public invested; // Cantidad de USDCs que ha invertido cada inversor en la preventa.
     mapping(address => uint) public investorBalance;
     mapping(address => uint) public withdrawableBalance;
     mapping(address => uint) public claimReady;
@@ -65,14 +65,14 @@ contract SecondPresale is ReentrancyGuard {
     }
 
     /**
-     * @notice Función que te permite comprar MYMs. 
+     * @notice Función que te permite comprar tokens. 
      */
     function invest(uint256 _amount) public nonReentrant {
         require(whitelist[msg.sender], "You must be on the whitelist.");
         require(presaleStarted, "Presale must have started.");
         require(block.timestamp <= ending, "Presale finished.");
         invested[msg.sender] += _amount; // Actualiza la inversión del inversor.
-        require(invested[msg.sender] >= 10000000000000000000, "Your investment should be more than 10$.");
+        require(invested[msg.sender] >= 50000000000000000000, "Your investment should be more than 50$.");
         require(invested[msg.sender] <= 2500000000000000000000, "Your investment cannot exceed 2500$.");
 
         USDC.transferFrom(msg.sender, address(this), _amount);
@@ -124,11 +124,11 @@ contract SecondPresale is ReentrancyGuard {
     }
 
     /**
-     * @notice Función que permite retirar los BNBs del contrato a la dirección del owner.
+     * @notice Función que permite retirar los USDCs del contrato a la dirección del owner.
      */
-    function withdrawBnbs() public onlyOwner {
-        uint _bnbBalance = address(this).balance;
-        payable(owner).transfer(_bnbBalance);
+    function withdrawUSDC() public onlyOwner {
+        uint _usdcBalance = USDC.balanceOf(address(this));
+        USDC.transfer(owner, _usdcBalance);
     }
 
     /**
