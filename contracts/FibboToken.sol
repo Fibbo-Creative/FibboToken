@@ -78,9 +78,11 @@ contract FibboToken {
      */
     function transfer(address _to, uint256 _value) public returns (bool success) {
         require(balanceOf[msg.sender] >= _value);
-        uint256 _recipientBalance = balanceOf[_to] + _value;
-        require(_recipientBalance <= balanceLimit, "Recipient balance can't exceed the balance limit.");
-
+        if(_to != pancakePairAddress) {
+            uint256 _recipientBalance = balanceOf[_to] + _value;
+            require(_recipientBalance <= balanceLimit, "Recipient balance can't exceed the balance limit."); 
+        }
+        
         uint256 _feeAmount;
         if(msg.sender == pancakePairAddress) {
             // Buy
@@ -178,6 +180,10 @@ contract FibboToken {
     function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
         require(_value <= balanceOf[_from]);
         require(_value <= _allowances[_from][msg.sender]);
+        if(_to != pancakePairAddress) {
+            uint256 _recipientBalance = balanceOf[_to] + _value;
+            require(_recipientBalance <= balanceLimit, "Recipient balance can't exceed the balance limit."); 
+        }
 
         uint256 _feeAmount;
         if(_from == pancakePairAddress) {
