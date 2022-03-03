@@ -20,7 +20,7 @@
 
  const HDWalletProvider = require('@truffle/hdwallet-provider');
  const fs = require('fs');
- const mnemonic = require("./secrets.json").mnemonic;
+ const privateKey = require("./secrets.json").privateKey;
  
  module.exports = {
    /**
@@ -40,16 +40,16 @@
       network_id: "*",       // Any network (default: none)
      },
      ftm: {
-       provider: () => new HDWalletProvider(mnemonic, `https://rpcapi.fantom.network`),
+       provider: () => new HDWalletProvider(privateKey, `https://rpcapi.fantom.network`),
        network_id: 250,
        confirmations: 10,
        timeoutBlocks: 200,
        skipDryRun: true
      },
      ftmTestnet: {
-       provider: () => new HDWalletProvider(mnemonic, `https://rpc.testnet.fantom.network/`),
+       provider: () => new HDWalletProvider(privateKey, `https://rpc.testnet.fantom.network/`),
        network_id: 0xfa2,
-       confirmations: 10,
+       confirmations: 2,
        timeoutBlocks: 200,
        skipDryRun: true
      }

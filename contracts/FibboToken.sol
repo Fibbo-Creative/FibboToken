@@ -15,6 +15,7 @@ contract FibboToken {
     address public devWallet;
     address public marketingWallet;
     address public daoContract;
+    address public vestingContract;
     address private friendsPresale;
     address private firstPresale;
     address private secondPresale;
@@ -27,27 +28,29 @@ contract FibboToken {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
 
-    constructor(address _foundersWallet, address _teamWallet, address _devWallet, address _marketingWallet, address _daoContract, address _friendsPresale, address _firstPresale, address _secondPresale) {
+    constructor(address _foundersWallet, address _teamWallet, address _devWallet, address _marketingWallet, address _daoContract, address _vestingContract, address _friendsPresale, address _firstPresale, address _secondPresale) {
         foundersWallet = _foundersWallet;
         teamWallet = _teamWallet;
         devWallet = _devWallet;
         marketingWallet = _marketingWallet;
         daoContract = _daoContract;
+        vestingContract = _vestingContract;
         friendsPresale = _friendsPresale;
         firstPresale = _firstPresale;
         secondPresale = _secondPresale;
         router = IDEXRouter(0xcCAFCf876caB8f9542d6972f87B5D62e1182767d); // TODO: TestNet
         pancakePairAddress = IPancakeFactory(router.factory()).createPair(address(this), router.WETH());
 
-        //uint256 _foundersTokens = mulScale(totalSupply, 1500, 10000); // 1500 basis points = 15%
+        uint256 _foundersTokens = mulScale(totalSupply, 1500, 10000); // 1500 basis points = 15%
         uint256 _teamTokens = mulScale(totalSupply, 1000, 10000); // 1000 basis points = 10%
         uint256 _devTokens = mulScale(totalSupply, 1000, 10000); // 1000 basis points = 10%
         uint256 _marketingTokens = mulScale(totalSupply, 1000, 10000); // 1000 basis points = 10%
 
-        balanceOf[teamWallet] = _teamTokens;
+        //balanceOf[teamWallet] = _teamTokens;
         balanceOf[devWallet] = _devTokens;
         balanceOf[marketingWallet] = _marketingTokens;
-        balanceOf[foundersWallet] = totalSupply - (_teamTokens + _devTokens + _marketingTokens);
+        balanceOf[vestingContract] = _foundersTokens + _teamTokens;
+        balanceOf[foundersWallet] = totalSupply - (_foundersTokens + _teamTokens + _devTokens + _marketingTokens);
     }
 
     // Modifiers
